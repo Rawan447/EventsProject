@@ -3,20 +3,54 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package project2;
+package EventsPro;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author ghaid
  */
 public class signin extends javax.swing.JFrame {
-
-    /**
-     * Creates new form signin
-     */
+Connection connection = null;
+    Statement statement = null;
+    ResultSet resultSet = null;
+    String query;
+    
     public signin() {
         initComponents();
+         doConnect();
     }
+     public void doConnect( ) {
+     try 
+        {
+            String URL = "jdbc:derby://localhost:1527/eventsprojects";
+            String username = "project1";
+            String password = "123";
+            query = "select * from USERS";
+            connection = DriverManager.getConnection(URL,username,password);
+            statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+	  resultSet = statement.executeQuery(query);
+                     
+            resultSet.next();
+	  
+            
+            
+        } catch (SQLException ex) 
+        {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+     
+     
+     
+     
+     }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -30,7 +64,7 @@ public class signin extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        jPasswordField = new javax.swing.JPasswordField();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
@@ -47,10 +81,27 @@ public class signin extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Password");
 
+        jPasswordField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jPasswordFieldActionPerformed(evt);
+            }
+        });
+
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
         jButton1.setBackground(new java.awt.Color(255, 255, 255));
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(199, 167, 237));
         jButton1.setText("Sign in");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -65,7 +116,7 @@ public class signin extends javax.swing.JFrame {
                             .addComponent(jLabel1))
                         .addGap(82, 82, 82)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPasswordField1, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                            .addComponent(jPasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
                             .addComponent(jTextField1)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(154, 154, 154)
@@ -82,10 +133,10 @@ public class signin extends javax.swing.JFrame {
                 .addGap(58, 58, 58)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(69, 69, 69)
                 .addComponent(jButton1)
-                .addContainerGap(81, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -96,14 +147,56 @@ public class signin extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jPasswordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPasswordFieldActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String password=String.copyValueOf(jPasswordField.getPassword());
+        String username=jTextField1.getText();
+        if(username.equals("Admin")&&password.equals("Admin1234")){
+       Admin Adminpage= new Admin();
+            this.setVisible(false);
+            Adminpage.setVisible(true);
+             
+        }else{
+      try{  
+//       profile nuser=new  profile();
+//          nuser.setUser(jTextField1.getText());
+//          if(!username.equals("Admin")){
+       query="select * from USERS where user_email=? AND password=?";
+     PreparedStatement pst=connection.prepareStatement(query);
+     pst.setString(1, username);
+     pst.setString(2, password);
+     System.out.println(query);
+     resultSet= pst.executeQuery();
+     if(resultSet.next()){
+        events event= new  events();
+        this.setVisible(false);
+       event.setVisible(true);
+     }
+        else{
+         
+               JOptionPane.showMessageDialog(this, " The data you entered is not compatible with our database"," Data is wrong!",JOptionPane.WARNING_MESSAGE);
+         
+                }
+          
+          
+   } 
+      catch (SQLException sqlEx) {
+     JOptionPane.showMessageDialog(this, sqlEx.getMessage());
+   }}
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -145,7 +238,7 @@ public class signin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPasswordField jPasswordField1;
+    private javax.swing.JPasswordField jPasswordField;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

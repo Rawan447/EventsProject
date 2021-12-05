@@ -3,7 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package project2;
+package EventsPro;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -11,12 +18,37 @@ package project2;
  */
 public class signup extends javax.swing.JFrame {
 
-    /**
-     * Creates new form signup
-     */
+   Connection connection = null;
+    Statement statement = null;
+    ResultSet resultSet = null;
+    String query;
     public signup() {
         initComponents();
+         doConnect();
     }
+     public void doConnect( )
+     {
+       try 
+        {
+            String URL = "jdbc:derby://localhost:1527/eventsprojects";
+            String username = "project1";
+            String password = "123";
+            query = "select * from USERS";
+            connection = DriverManager.getConnection(URL,username,password);
+            statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+	  resultSet = statement.executeQuery(query);
+                     
+            resultSet.next();
+	  
+            
+            
+        } catch (SQLException ex) 
+        {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+     
+     
+     }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -65,10 +97,21 @@ public class signup extends javax.swing.JFrame {
             }
         });
 
+        jPasswordField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jPasswordField1ActionPerformed(evt);
+            }
+        });
+
         jButton1.setBackground(new java.awt.Color(255, 255, 255));
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(199, 167, 237));
         jButton1.setText("Sign up");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -94,7 +137,7 @@ public class signup extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(171, 171, 171)
                         .addComponent(jButton1)))
-                .addContainerGap(194, Short.MAX_VALUE))
+                .addContainerGap(218, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -117,23 +160,18 @@ public class signup extends javax.swing.JFrame {
                     .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -142,6 +180,81 @@ public class signup extends javax.swing.JFrame {
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+     String r="";
+                char[] c=jTextField3.getText().toCharArray();
+                for(int i=0;i<c.length;i++){
+                    if (c[i]>='0'&& c[i]<='9'){
+                         r+=c[i];}
+                    else{
+                         JOptionPane.showMessageDialog(this, " Enter Number value for the phone Number"," Number only!",JOptionPane.WARNING_MESSAGE);
+                         r="";
+                         break;
+                    }
+                    }
+                    System.out.println(r);
+
+                if (r.length()<=10)
+                {
+                    String mail=jTextField2.getText().toLowerCase();
+                if(mail.contains("@gmail.com")||mail.contains("@hotmail.com")){
+                    
+                    String pass=String.copyValueOf(jPasswordField1.getPassword());
+                    String confirmpass=String.copyValueOf(jPasswordField1.getPassword());
+                    if(pass.equals(confirmpass)){
+                        int phone=Integer.parseInt(r);
+                        String email=jTextField2.getText();
+                        String usename=jTextField1.getText();
+                        if(usename!="Admin"){
+                        try 
+        {
+            resultSet.moveToInsertRow();
+       
+            resultSet.updateInt("phone_num", phone);
+            resultSet.updateString("USER_EMAIL", email);
+            resultSet.updateString("password", pass);
+            resultSet.updateString("USER_NAME", usename);
+            
+            resultSet.insertRow();
+            
+            resultSet.close();
+            statement.close();
+            JOptionPane.showMessageDialog(this, "you are successfully registered");
+           signin signin= new signin();
+            this.setVisible(false);
+            signin.setVisible(true);
+
+            
+        } catch (SQLException sqlEx) 
+        {
+            System.out.println(sqlEx.getMessage());
+            JOptionPane.showMessageDialog(this, sqlEx.getMessage());
+        }
+                        }
+                    else{
+                        JOptionPane.showMessageDialog(this, " This user name is used, try with another name"," Change user name",JOptionPane.WARNING_MESSAGE);  
+
+                    }}
+                    else{
+                        JOptionPane.showMessageDialog(this, " The password is not correct, try again"," Password is Wrong!",JOptionPane.WARNING_MESSAGE);  
+                    }
+                    }
+                 else{
+                  JOptionPane.showMessageDialog(this, " The email is not correct, try again"," E-mail is Wrong!",JOptionPane.WARNING_MESSAGE);
+                }
+                    
+                }
+                  
+          else{
+           JOptionPane.showMessageDialog(this, " The Phone Number should contain 10 Numbers only"," Phone Number is Wrong!",JOptionPane.WARNING_MESSAGE);
+                }
+                 
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPasswordField1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -190,4 +303,6 @@ public class signup extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables
+
+    
 }
