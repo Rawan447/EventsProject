@@ -29,6 +29,9 @@ Connection connection = null;
      */
     public tickets() {
         initComponents();
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Image   titleIcon = tk.getImage(getClass().getResource("rs.jfif"));
+        setIconImage(titleIcon);
         doConnect( ) ;
         jLabel11.setText(ename);
         
