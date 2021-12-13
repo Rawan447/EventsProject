@@ -16,6 +16,9 @@ public class wellcom extends javax.swing.JFrame {
      */
     public wellcom() {
         initComponents();
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Image   titleIcon = tk.getImage(getClass().getResource("rs.jfif"));
+        setIconImage(titleIcon);
     }
 
     /**
