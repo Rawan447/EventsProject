@@ -24,9 +24,6 @@ public class signup extends javax.swing.JFrame {
     String query;
     public signup() {
         initComponents();
-	Toolkit tk = Toolkit.getDefaultToolkit();
-        Image   titleIcon = tk.getImage(getClass().getResource("rs.jfif"));
-        setIconImage(titleIcon);
          doConnect();
     }
      public void doConnect( )
